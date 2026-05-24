@@ -58,7 +58,16 @@ const problemSchema = new mongoose.Schema<IProblem>({
     },
     testcases: [testSchema],
 }, {
-    timestamps: true
+    timestamps: true,
+    toJSON: {
+        transform: (_, record) => {
+            const { _id, __v, ...rest } = record as any;
+            return {
+                id: _id,
+                ...rest
+            };
+        }
+    }
 })
 
 problemSchema.index({ title: 1 }, { unique: true });

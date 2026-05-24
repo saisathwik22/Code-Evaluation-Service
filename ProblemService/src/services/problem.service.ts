@@ -1,14 +1,14 @@
-import { CreateProblemDTO, updateProblemDTO } from "../dtos/problem.dto";
+import { CreateProblemDto, updateProblemDto } from "../validators/problem.validator";
 import { IProblem } from "../models/problem.model";
 import { IProblemRepository } from "../repositories/problem.repository";
 import { BadRequestError, NotFoundError } from "../utils/errors/app.error";
 import { sanitizeMarkdown } from "../utils/markdown.sanitizer";
 
 export interface IProblemService {
-    createProblem(problem: CreateProblemDTO): Promise<IProblem>;
+    createProblem(problem: CreateProblemDto): Promise<IProblem>;
     getProblemById(id: string): Promise<IProblem | null>;
     getAllProblems(): Promise<{ problems: IProblem[], total: number}>;
-    updateProblem(id: string, updateData: updateProblemDTO): Promise<IProblem | null>;
+    updateProblem(id: string, updateData: updateProblemDto): Promise<IProblem | null>;
     deleteProblem(id: string): Promise<boolean>;
     findByDifficulty(difficulty: "easy" | "medium" | "hard"): Promise<IProblem[]>;
     searchProblems(query: string): Promise<IProblem[]>;
@@ -22,7 +22,7 @@ export class ProblemService implements IProblemService {
         this.problemRepository = problemRepository;
     }
 
-    async createProblem(problem: CreateProblemDTO): Promise<IProblem> {
+    async createProblem(problem: CreateProblemDto): Promise<IProblem> {
         const sanitizedPayload = {
             ...problem,
             description: await sanitizeMarkdown(problem.description),
@@ -43,7 +43,7 @@ export class ProblemService implements IProblemService {
         return await this.problemRepository.getAllProblems();
     }
 
-    async updateProblem(id: string, updateData: updateProblemDTO): Promise<IProblem | null> {
+    async updateProblem(id: string, updateData: updateProblemDto): Promise<IProblem | null> {
         const problem = await this.problemRepository.getProblemById(id);
 
         if(!problem) {
